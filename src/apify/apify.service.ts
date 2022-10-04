@@ -3,12 +3,7 @@ import { BrowserService } from '../browser.service';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export type Transformers<T> = Partial<Record<keyof Partial<T>, (value: string) => any>>;
-const sleepAsync = (timeout: number) =>
-  new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, timeout);
-  });
+
 export class ApifyService<T> {
   constructor(
     private elementContainerSelector: string,

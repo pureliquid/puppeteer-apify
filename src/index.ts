@@ -1,6 +1,6 @@
 import { BrowserService } from './browser.service';
 // import { ExtensionLoaderService } from './extension-loader.service';
-import './apify/willhaben/index';
+import './apify/backmarket/index';
 const fn = async () => {
   // const extensionLoaderService = new ExtensionLoaderService();
   process.exit(1);

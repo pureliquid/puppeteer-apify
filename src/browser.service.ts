@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { Browser, LoadEvent, Page, Request } from 'puppeteer';
+import { Browser, PuppeteerLifeCycleEvent, Page, HTTPRequest } from 'puppeteer';
 import { ExtensionLoaderService } from './extension-loader.service';
 
 export class BrowserService {
@@ -24,7 +24,7 @@ export class BrowserService {
   async interceptNavigationOrReload(
     page: Page,
     url: string | undefined,
-    interceptor: (request: Request, event: 'request' | 'finished' | 'failed') => Promise<void>
+    interceptor: (request: HTTPRequest, event: 'request' | 'finished' | 'failed') => Promise<void>
   ) {
     await page.setRequestInterception(true);
     await page.setBypassCSP(true);
@@ -36,7 +36,7 @@ export class BrowserService {
       height: 1080,
     });
 
-    page.on('request', async (request: Request) => {
+    page.on('request', async (request: HTTPRequest) => {
       await interceptor(request, 'request');
     });
 
@@ -46,7 +46,7 @@ export class BrowserService {
     page.on('requestfailed', async (request) => {
       await interceptor(request, 'failed');
     });
-    const waitUntil: LoadEvent = 'networkidle0';
+    const waitUntil: PuppeteerLifeCycleEvent = 'networkidle0';
     await page.goto(url ?? page.url(), { waitUntil }); /*: 'domcontentloaded'*/
 
     await page.setRequestInterception(false);
