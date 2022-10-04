@@ -3,7 +3,12 @@ import { BrowserService } from '../browser.service';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export type Transformers<T> = Partial<Record<keyof Partial<T>, (value: string) => any>>;
-
+const sleepAsync = (timeout: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, timeout);
+  });
 export class ApifyService<T> {
   constructor(
     private elementContainerSelector: string,
@@ -12,9 +17,18 @@ export class ApifyService<T> {
     private browserService = new BrowserService()
   ) {}
 
-  async getElements(url: string, closePage = true) {
+  async getElements(
+    url: string,
+    waitTill: 'networkidle0' | ((page: Page) => Promise<void>) = 'networkidle0',
+    closePage = true
+  ) {
     const page: Page = await this.browserService.browser.newPage();
-    await this.browserService.awaitNavigation(page, url);
+    if (waitTill === 'networkidle0') {
+      await this.browserService.awaitNavigation(page, url);
+    } else {
+      await page.goto(url);
+      await waitTill(page);
+    }
     await this.browserService.scrollToBottom(page);
     const res = await page.evaluate(
       (selectors: Record<keyof T, string>, elementContainerSelector: string) => {
