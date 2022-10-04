@@ -1,4 +1,3 @@
-import { WillhabenApifyModel } from '../willhaben/willhaben-apified.interfaces';
 import { ApifyService } from '../apify.service';
 import { BackmarketApifyModel } from './backmarket-apified.interfaces';
 
